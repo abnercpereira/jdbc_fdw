@@ -58,6 +58,7 @@ static bool jdbc_is_libpq_option(const char *keyword);
  *
  * Raise an ERROR if the option or its value is considered invalid.
  */
+PGDLLEXPORT Datum jdbc_fdw_validator(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(jdbc_fdw_validator);
 
 Datum

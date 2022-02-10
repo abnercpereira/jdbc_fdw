@@ -50,7 +50,6 @@
 #include "catalog/pg_user_mapping.h"
 #define Str(arg) #arg
 #define StrValue(arg) Str(arg)
-#define STR_PKGLIBDIR StrValue(PKG_LIB_DIR)
 #define IS_KEY_COLUMN(A)  ((strcmp(A->defname, "key") == 0) && \
                (strcmp(((Value *)(A->arg))->val.str, "true") == 0))
 
@@ -233,6 +232,7 @@ typedef struct ConversionLocation
 /*
  * SQL functions
  */
+PGDLLEXPORT Datum jdbc_fdw_handler(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(jdbc_fdw_handler);
 
 /*
@@ -2394,11 +2394,10 @@ jdbc_add_foreign_final_paths(PlannerInfo *root, RelOptInfo *input_rel,
 	 * Build the fdw_private list that will be used by postgresGetForeignPlan.
 	 * Items in the list must match order in enum FdwPathPrivateIndex.
 	 */
-	fdw_private = list_make2(makeInteger(has_final_sort)
 #if (PG_VERSION_NUM >= 120000)
-							 ,makeInteger(extra->limit_needed));
+	fdw_private = list_make2(makeInteger(has_final_sort), makeInteger(extra->limit_needed));
 #else
-							 ,makeInteger(false));
+	fdw_private = list_make2(makeInteger(has_final_sort),makeInteger(false));
 #endif
 
 	/*

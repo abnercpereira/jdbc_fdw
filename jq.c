@@ -31,7 +31,6 @@
 
 #define Str(arg) #arg
 #define StrValue(arg) Str(arg)
-#define STR_PKGLIBDIR StrValue(PKG_LIB_DIR)
 /* Number of days from unix epoch time (1970-01-01) to postgres epoch time (2000-01-01) */
 #define POSTGRES_TO_UNIX_EPOCH_DAYS 		(POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE)
 /* POSTGRES_TO_UNIX_EPOCH_DAYS to microseconds */
@@ -294,7 +293,7 @@ jdbc_jvm_init(const ForeignServer * server, const UserMapping * user)
 								 * not */
 	JavaVMInitArgs vm_args;
 	JavaVMOption *options;
-	char		strpkglibdir[] = STR_PKGLIBDIR;
+	char	    strpkglibdir[MAXPGPATH];
 	char	   *classpath;
 	char	   *maxheapsizeoption = NULL;
 
@@ -308,6 +307,7 @@ jdbc_jvm_init(const ForeignServer * server, const UserMapping * user)
 
 	if (FunctionCallCheck == false)
 	{
+		get_pkglib_path(my_exec_path, strpkglibdir);
 		classpath = (char *) palloc0(strlen(strpkglibdir) + 19);
 		snprintf(classpath, strlen(strpkglibdir) + 19, "-Djava.class.path=%s", strpkglibdir);
 
